@@ -14,3 +14,5 @@ class Chatbot:
     
     def decode_reply(self, reply_ids: list[int]):
         decoded = self.tokenizer.decode(reply_ids, skip_special_tokens=True)
+        return decoded
+        
