@@ -11,6 +11,8 @@ class Chatbot:
 
         self.chat_history_ids = None
 
+        self.system_prompt = "You are a helpful assistant. Respond to the end of this conversation accordingly.\n"
+
     def encode_prompt(self, prompt: str):
         encoded = self.tokenizer(prompt, return_tensors="pt")
         return encoded
@@ -28,8 +30,12 @@ class Chatbot:
         prompt_attention_mask = encoded_prompt['attention_mask']
 
         if self.chat_history_ids == None:    
-            input_ids = prompt_ids
-            attention_mask = prompt_attention_mask
+            encoded_system_prompt = self.encode_prompt(self.system_prompt)
+            system_prompt_ids = encoded_system_prompt['input_ids']
+            
+            input_ids = torch.cat((system_prompt_ids, prompt_ids), dim=1)
+            attention_mask = torch.ones_like(input_ids)
+        
         else:
             input_ids = torch.cat((self.chat_history_ids, prompt_ids), dim=1)
             attention_mask = torch.ones_like(input_ids)
