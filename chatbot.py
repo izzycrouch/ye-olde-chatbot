@@ -25,9 +25,6 @@ class Chatbot:
         encoded_prompt = self.encode_prompt(new_prompt)
         
         prompt_ids = encoded_prompt['input_ids']
-        list_prompt_ids = prompt_ids[0].tolist()
-        prompt_len = len(list_prompt_ids)
-
         prompt_attention_mask = encoded_prompt['attention_mask']
 
         if self.chat_history_ids == None:    
@@ -35,8 +32,6 @@ class Chatbot:
             attention_mask = prompt_attention_mask
         else:
             input_ids = torch.cat((self.chat_history_ids, prompt_ids), dim=1)
-            list_input_ids = prompt_ids[0].tolist()
-            input_len = len(list_prompt_ids)
             attention_mask = torch.ones_like(input_ids)
 
         generate = self.model.generate(input_ids=input_ids, attention_mask=attention_mask , pad_token_id=self.tokenizer.eos_token_id, do_sample=True)
@@ -51,3 +46,6 @@ class Chatbot:
     
         return decoded_reply
 
+    def reset_history(self):
+        self.chat_history_ids = None
+        return self.chat_history_ids
